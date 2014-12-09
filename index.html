@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <meta name="description" content="HTML5 CSS3 game">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1" />
+  <link rel="stylesheet" href="css/style.css">
+ </head>
+ <body>
+  <div id="kf-loading-overlay">
+   <span>Loading...</span>
+  </div>
+
+  <div id="kf-gamecont" style="display: none;">
+   <div id="kf-boardcont">
+    <div id="kf-bcont" onselectstart="return false">
+
+     <div id="kf-overlaytable">
+      <div id="kf-overlay" onselectstart="return false">
+       <div id="kf-ocause"></div>
+       <span class="kf-xbutton menu" id="kf-resume">Resume</span>
+       <span class="kf-xbutton menu" id="kf-newgame">New Game</span>
+      </div>
+     </div>
+
+     <div id="kf-padding">
+      <div id="kf-board">
+       <div id="kf-aholder0"></div>
+       <div id="kf-aholder1"></div>
+      </div>
+     </div>
+    </div>
+   </div>
+
+   <div id="kf-infocont">
+    <div class="kf-stat">
+     <header>Next</header>
+     <div id="kf-ncont">
+      <div id="kf-next">
+       <div class="ball-container" id="kf-next-ball1"><div class="ball"></div></div>
+       <div class="ball-container" id="kf-next-ball2"><div class="ball"></div></div>
+      </div>
+     </div>
+     <br>
+    </div>
+    
+    <div class="kf-stat">
+     <header>Score</header>
+     <div id="kf-score">0</div>
+     <br>
+    </div>
+
+    <div class="kf-stat">
+     <header>Level</header>
+
+     <div id="kf-levelinfo">
+      <div class="kf-levelprogress">
+       <span id="kf-level">1</span>
+       <div id="kf-progress"></div>
+      </div>
+     </div>
+    </div>
+
+    <div class="kf-stat kf-buttonstat">
+     <span class="kf-xbutton" id="kf-newgame2">New Game</span>
+     <div class="kf-buttonsep"></div>
+     <span class="kf-xbutton" id="kf-pausegame2">Pause</span>
+     <div class="kf-buttonsep"></div>
+     <span class="kf-xbutton" id="kf-opensettings">Settings</span>
+    </div>
+   </div>
+  </div>
+
+  <div class="kf-overlay" id="kf-dialog-overlay">
+   <span class="align"></span><!-- thx, YouTube -->
+   <div class="kf-dialog" id="kf-settings-dialog">
+    <header>Settings</header>
+    <main>
+     <label><input type="checkbox" id="kf-settings-enable-ghost">Enable ghost</label>
+     <br><br>
+     Board width:<br><input type="number" min=5 max=40 id="kf-settings-width-input"><br><br>
+     Board height:<br><input type="number" min=5 max=40 id="kf-settings-height-input"><br>
+    </main>
+    <footer>
+     <span class="kf-xbutton kf-dialog-close">Close</span>
+    </footer>
+   </div>
+  </div> 
+
+  <script src="js/kf.js"></script>
+  <script src="js/Game.js"></script>
+  <script src="js/Board.js"></script>
+  <script src="js/Display.js"></script>
+  <script src="js/Settings.js"></script>
+  <script src="js/KeyUtils.js"></script>
+  <script src="js/PointerUtils.js"></script>
+ </body>
+</html>
