@@ -46,6 +46,7 @@ kf.Game.prototype.newGame = function()
 kf.Game.prototype.resume = function()
 {
  this.display.hideOverlay();
+ this.display.resume();
  this.paused = false;
 };
 kf.Game.prototype.pause = function()
@@ -69,13 +70,14 @@ kf.Game.prototype.onSettingsChanged = function()
 };
 kf.Game.prototype.onHideSettings = function()
 {
- this.display.clearTouch();
- this.display.clearKeys();
+ this.display.hideSettings();
  this.suspended = false;
+ if (!this.game.over && !this.game.paused)
+ this.display.resume();
 };
 kf.Game.prototype.tick = function()
 {
- if (this.state == 'settling' || this.state == 'flashing' || this.suspended) return; //waiting for animations
+ if (this.suspended) return;
  var more = false;
  
  var keys = this.display.queryKeys();
@@ -101,7 +103,7 @@ kf.Game.prototype.tick = function()
  if (keys.enter && this.paused)
  return this.resume();
 
- if (this.paused || this.over) return;
+ if (this.paused || this.over || this.state == 'flashing' || this.state == 'settling') return;
 
 
  if (this.state == 'tosettle')

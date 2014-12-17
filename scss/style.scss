@@ -143,17 +143,18 @@ body
 #kf-aholder0, #kf-aholder1
 {
  opacity: 1;
+ -webkit-transform: translate3d(0px, 0px, 0px);
 }
-#kf-aholder0.flash, #kf-aholder1.flash
+#kf-aholder0.flashing-playing, #kf-aholder1.flashing-playing
 {
  @include animation(flashing, 0.35s, ease-in-out, 2);
 }
 
 @include keyframes(flashing) 
 {  
- 0% { opacity: 0.6; }
- 50% { opacity: 1.0; }
- 100% { opacity: 0.6; }
+ 0% { opacity: 1.0; }
+ 50% { opacity: 0.6; }
+ 100% { opacity: 1.0; }
 }
 
 
@@ -186,6 +187,7 @@ body
 }
 #kf-padding
 {
+ -webkit-transform: translate3d(0px, 0px, 0px);
  z-index: 0;
  overflow: hidden;
 }

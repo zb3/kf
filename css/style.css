@@ -93,9 +93,10 @@ body {
   opacity: 0.2; }
 
 #kf-aholder0, #kf-aholder1 {
-  opacity: 1; }
+  opacity: 1;
+  -webkit-transform: translate3d(0px, 0px, 0px); }
 
-#kf-aholder0.flash, #kf-aholder1.flash {
+#kf-aholder0.flashing-playing, #kf-aholder1.flashing-playing {
   -webkit-animation-duration: 0.35s;
   -webkit-animation-name: flashing;
   -webkit-animation-timing-function: ease-in-out;
@@ -107,43 +108,43 @@ body {
 
 @-webkit-keyframes flashing {
   0% {
-    opacity: 0.6; }
-
-  50% {
     opacity: 1; }
 
+  50% {
+    opacity: 0.6; }
+
   100% {
-    opacity: 0.6; } }
+    opacity: 1; } }
 
 @-moz-keyframes flashing {
   0% {
-    opacity: 0.6; }
-
-  50% {
     opacity: 1; }
 
+  50% {
+    opacity: 0.6; }
+
   100% {
-    opacity: 0.6; } }
+    opacity: 1; } }
 
 @-ms-keyframes flashing {
   0% {
-    opacity: 0.6; }
-
-  50% {
     opacity: 1; }
 
+  50% {
+    opacity: 0.6; }
+
   100% {
-    opacity: 0.6; } }
+    opacity: 1; } }
 
 @keyframes flashing {
   0% {
-    opacity: 0.6; }
-
-  50% {
     opacity: 1; }
 
+  50% {
+    opacity: 0.6; }
+
   100% {
-    opacity: 0.6; } }
+    opacity: 1; } }
 
 .ball-container.left .handle-left {
   display: block; }
@@ -177,6 +178,7 @@ body {
   margin-top: 4px; }
 
 #kf-padding {
+  -webkit-transform: translate3d(0px, 0px, 0px);
   z-index: 0;
   overflow: hidden; }
 
