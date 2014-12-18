@@ -60,6 +60,7 @@ kf.Display = function(game, keys)
 
  this.keyManager = new KeyManager(this.keyName);
  this.touchManager = new PointerManager(document.getElementById('kf-boardcont'));
+ this.animator = new kf.Animator();
 
  this.dialog = new kf.Dialog();
 
@@ -140,10 +141,19 @@ kf.Display.prototype.showOverlay = function(cause)
  this.overlayElement.style.display = 'table';
  this.pauseElement.style.display = 'none';
 };
+kf.Display.prototype.resume = function(cause)
+{
+ this.animator.resumeAnimations();
+};
 kf.Display.prototype.hideOverlay = function()
 {
  this.overlayElement.style.display = 'none';
  this.pauseElement.style.display = 'block';
+};
+kf.Display.prototype.hideSettings = function()
+{
+ this.clearTouch();
+ this.clearKeys();
 };
 kf.Display.prototype.displayOver = function()
 {
@@ -153,12 +163,14 @@ kf.Display.prototype.displayOver = function()
 };
 kf.Display.prototype.displayPaused = function()
 {
+ this.animator.pauseAnimations();
  this.resumeElement.style.display = 'block';
  this.newGameElement.style.display = 'none';
  this.showOverlay('Paused');
 };
 kf.Display.prototype.displaySettings = function()
 {
+ this.animator.pauseAnimations();
  this.dialog.display('settings', this.game.onHideSettings.bind(this.game));
 };
 kf.Display.prototype.queryKeys = function()
@@ -187,6 +199,7 @@ kf.Display.prototype.clearTouch = function()
 };
 kf.Display.prototype.newBoard = function(x, y)
 {
+ this.animator.abortAnimations();
  this.initBoardDisplay(x, y);
 
  while(this.boardElement.firstChild)
@@ -233,6 +246,10 @@ kf.Display.prototype._setBallXPosition = function(element, x)
 kf.Display.prototype._setBallYPosition = function(element, y)
 {
  element.style.top = y*this.ballSize+'px';
+};
+kf.Display.prototype._getFinalTop = function(element, y)
+{
+ return y*this.ballSize;
 };
 kf.Display.prototype._setBallPosition = function(element, x, y)
 {
@@ -365,7 +382,7 @@ kf.Display.prototype.__afterSettle = function(callback)
 }
 kf.Display.prototype.settle = function(diff, callback) //that's hardcore
 {
- var lastElement = null, longest = 0, element, t, x, y;
+ var lastElement = null, longest = 0, element, toAnimate = [], t, x, y;
 
  for(t=0;t<diff.length;t++)
  {
@@ -379,47 +396,19 @@ kf.Display.prototype.settle = function(diff, callback) //that's hardcore
    longest = diff[t][1];
   }
 
-  element.style.transition = 'top '+(Math.sqrt(diff[t][1])/10)+'s ease-in';
+  toAnimate.push(element, Math.sqrt(diff[t][1])/10, diff[t][0][1]+diff[t][1]);
  }
 
  this.updateBoardHandles();
 
- for(x=0;x<this.game.board.x;x++)
- for(y=0;y<this.game.board.y;y++)
+ for(t=0;t<toAnimate.length;t+=3)
  {
-  if (this.game.board.isFree(x, y)) continue;
-
-  element = this.balls[x][y];
-  if (element==lastElement)
-  {
-   this._addOneTimeEventListener(element, 'transitionend', this.__afterSettle.bind(this, callback));
-  }
-  this._setBallPosition(element, x, y);
+  this.animator.createAnimation(toAnimate[t], {keyframes: 'top: '+this._getFinalTop(toAnimate[t], toAnimate[t+2])+'px', duration: toAnimate[t+1]+'s', timingFunction: 'ease-in', fillMode: 'forwards'}, {onend: toAnimate[t]==lastElement?this.__afterSettle.bind(this, callback):null});
  }
 
  if (lastElement===null)
  {
   this.__afterSettle(callback);
- }
-};
-kf.Display.prototype.flashGroupsold = function(groups, callback)
-{
- var t, t2, eventAdded = false, element;
- for(t=0;t<groups.length;t++)
- for(t2=0;t2<groups[t].length;t2++)
- {
-  element = this.balls[groups[t][t2][0]][groups[t][t2][1]];
-  if (!eventAdded)
-  {
-   this._addOneTimeEventListener(element, 'animationend', this.__afterFlash.bind(this, element, callback));
-   this._addOneTimeEventListener(element, 'webkitAnimationEnd', this.__afterFlash.bind(this, element, callback));
-   eventAdded = true;
-  }
-  else
-  this._addOneTimeEventListener(element, 'animationend', this.__afterFlash.bind(this, element));
-  this._addOneTimeEventListener(element, 'webkitAnimationEnd', this.__afterFlash.bind(this, element));
-  element.classList.add('flash'); //no color should have the same color keyframes
-  this.balls[groups[t][t2][0]][groups[t][t2][1]] = null;
  }
 };
 kf.Display.prototype.flashGroups = function(groups, callback)
@@ -432,24 +421,14 @@ kf.Display.prototype.flashGroups = function(groups, callback)
    this.animationElements[t].appendChild(this.balls[groups[t][t2][0]][groups[t][t2][1]]);
    this.balls[groups[t][t2][0]][groups[t][t2][1]] = null;
   }
-  this.animationElements[t].classList.add('flash');
-  this._addOneTimeEventListener(this.animationElements[t], 'animationend', this.__afterFlash.bind(this, this.animationElements[t], callback));
-  this._addOneTimeEventListener(this.animationElements[t], 'webkitAnimationEnd', this.__afterFlash.bind(this, this.animationElements[t], callback));
+  this.animator.createAnimation(this.animationElements[t], {name: 'flashing'}, {onend: this.__afterFlash.bind(this, this.animationElements[t], callback), onabort: this.__clearAnimationElement.bind(this, this.animationElements[t])});
  }
-};
-kf.Display.prototype.__afterFlashold = function(element, callback)
-{
- this._addOneTimeEventListener(element, 'transitionend', this.__killElement.bind(this, element));
- element.style.transition = 'opacity 0.1s linear';
- element.style.opacity = '0';
- if (typeof callback == 'function')
- callback(); //nickelback!!!
 };
 kf.Display.prototype.__afterFlash = function(element, callback)
 {
  this._addOneTimeEventListener(element, 'transitionend', this.__clearAnimationElement.bind(this, element));
  element.classList.remove('flash');
- element.style.opacity = '0.6';
+ element.style.opacity = '1';
  element.offsetHeight; //hack for chrome so that it can fire transition..
  element.style.transition = 'opacity 0.1s linear';
  element.style.opacity = '0';
