@@ -70,7 +70,6 @@ kf.Game.prototype.onSettingsChanged = function()
 };
 kf.Game.prototype.onHideSettings = function()
 {
- this.onSettingsChanged();
  this.display.hideSettings();
  this.suspended = false;
  if (!this.over && !this.paused)
