@@ -72,7 +72,7 @@ kf.Game.prototype.onHideSettings = function()
 {
  this.display.hideSettings();
  this.suspended = false;
- if (!this.game.over && !this.game.paused)
+ if (!this.over && !this.paused)
  this.display.resume();
 };
 kf.Game.prototype.tick = function()
