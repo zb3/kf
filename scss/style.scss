@@ -1,0 +1,440 @@
+$ball-size: 30px;
+$ball-padding: 2px;
+$board-padding: 2px;
+$board-border: 3px;
+$bcont-size: $ball-size + 2*$ball-padding;
+$loc: 1/3;
+$hh: 8px;
+$colors: #666666 #55ffff #55ff99 #ffff55 #ff5555 #ff55ff;
+$panel-width: 105px;
+$panel-space: 15px;
+$gamecont-padding: 11px;
+
+$gamecont-width: 2*($ball-padding + $board-padding + $board-border + $gamecont-padding) + $panel-space + $panel-width;
+$gamecont-height: 2*($ball-padding + $board-padding + $board-border + $gamecont-padding);
+
+$body-color: #0b0b0b;
+
+@mixin animation ($name, $duration, $timing-function, $iteration-count)
+{
+ -webkit-animation-duration: $duration;
+ -webkit-animation-name: $name;
+ -webkit-animation-timing-function: $timing-function;
+ -webkit-animation-iteration-count: $iteration-count;
+ 
+ animation-duration: $duration;
+ animation-name: $name;
+ animation-timing-function: $timing-function;
+ animation-iteration-count: $iteration-count;
+}
+
+@mixin keyframes($name)
+{
+ @-webkit-keyframes #{$name}
+ {
+  @content; 
+ }
+ @-moz-keyframes #{$name}
+ {
+  @content;
+ }
+ @-ms-keyframes #{$name}
+ {
+  @content;
+ }
+ @keyframes #{$name}
+ {
+  @content;
+ } 
+}
+
+body
+{
+ background-color: $body-color;
+ font-family: Arial;
+ color: white;
+ overflow: hidden;
+ margin:0;
+}
+#kf-gamecont
+{
+ box-sizing: border-box;
+ position: absolute;
+ top: 0; left: 0;
+ display: inline-block;
+ padding:11px;
+ width: $gamecont-width; height: $gamecont-height;
+ -webkit-backface-visibility: hidden;
+}
+@for $i from 1 through length($colors)
+{
+ .ball-container.color#{$i}
+ {
+  .ball
+  {
+   background: radial-gradient(circle at $ball-size*$loc $ball-size*$loc, rgba(255,255,255,0.3), rgba(255,255,255,0) 10px),radial-gradient(circle at $ball-size*$loc $ball-size*$loc, nth($colors, $i), #000 31px);
+  }
+  .handle-left, .handle-right, .handle-top, .handle-bottom
+  {
+   background-color: nth($colors, $i)/2;
+   border: 1px solid nth($colors, $i)/2;
+  }
+ }
+}
+
+.ball-container
+{
+ width: $bcont-size; height: $bcont-size;
+ position: absolute;
+
+ .ball
+ {
+  border-radius: 50%;
+  height: $ball-size; width: $ball-size;
+  position: absolute;
+  left: $ball-padding;
+  top: $ball-padding;
+  z-index: 2;
+ }
+
+ .handle-left, .handle-right, .handle-top, .handle-bottom
+ {
+  display: none;
+  box-sizing: border-box;
+  box-shadow: 0 0 1px rgba(0, 0, 0, 0.01); /* hacks for chrome */
+ }
+
+ .handle-left, .handle-right
+ {
+  position: absolute;
+  width: $ball-size/2; height: $hh;
+  top: ($bcont-size - $hh) / 2;
+  z-index:1;
+ }
+ .handle-left
+ {
+  left: 0;
+ }
+ .handle-right
+ {
+  right: 0;
+ }
+ 
+ .handle-top, .handle-bottom
+ {
+  position: absolute;
+  height: $ball-size/2; width: $hh;
+  left: ($bcont-size - $hh) / 2;
+  z-index:1;
+ }
+ .handle-top
+ {
+  top: 0;
+ }
+ .handle-bottom
+ {
+  bottom: 0;
+ }
+
+}
+.ball-container.ghost
+{
+ opacity: 0.2;
+}
+#kf-aholder0, #kf-aholder1
+{
+ opacity: 1;
+ -webkit-transform: translate3d(0px, 0px, 0px);
+}
+#kf-aholder0.flashing-playing, #kf-aholder1.flashing-playing
+{
+ @include animation(flashing, 0.35s, ease-in-out, 2);
+}
+
+@include keyframes(flashing) 
+{  
+ 0% { opacity: 1.0; }
+ 50% { opacity: 0.6; }
+ 100% { opacity: 1.0; }
+}
+
+
+
+.ball-container.left .handle-left {display: block;}
+.ball-container.right .handle-right {display: block;}
+.ball-container.top .handle-top {display: block;}
+.ball-container.bottom .handle-bottom {display: block;}
+
+#kf-bcont, #kf-ncont
+{
+ border: $board-border inset #777;
+ padding: $ball-padding+$board-padding; margin: 0;
+ background-color: black;
+}
+#kf-board
+{
+ top: -$bcont-size;
+}
+#kf-bcont
+{
+ position: relative;
+ background: linear-gradient(#000, #080808); 
+}
+#kf-ncont
+{
+ width: $bcont-size; height: 2*$bcont-size; 
+ margin: auto;
+ margin-top: 4px;
+}
+#kf-padding
+{
+ -webkit-transform: translate3d(0px, 0px, 0px);
+ z-index: 0;
+ overflow: hidden;
+}
+#kf-overlaytable
+{
+ z-index: 5;
+ position: absolute;
+ left: 0; top: 0;
+ width: 2*($ball-padding + $board-padding); height: 2*($ball-padding + $board-padding); 
+ background-color: rgba(10, 10, 10, 0.85);
+ text-align: center;
+ display: table;
+}
+#kf-overlay
+{
+ display: table-cell;
+ vertical-align: middle;
+}
+
+#kf-next-ball1
+{
+ top: 0; left: 0;
+}
+#kf-next-ball2
+{
+ top: $bcont-size; left: 0;
+}
+
+#kf-board, #kf-next
+{
+ position: relative;
+}
+#kf-level
+{
+ position: relative;
+ z-index: 2;
+ line-height: -moz-block-height;
+ text-shadow: #000 0px 0px 3px,#000 0px 0px 3px,#000 0px 0px 3px,#000 0px 0px 3px;
+
+}
+.kf-levelprogress
+{
+ box-sizing: border-box;
+ width: 100%;
+ height: 20px;
+ border: 1px solid #333;
+ background-color: black;
+ margin-top: 2px;
+ position:relative;
+}
+#kf-progress
+{
+ height: 100%;
+ width: 0%;
+ position: absolute;
+ top: 0;
+ z-index: 1;
+ background: linear-gradient(to bottom, #0e0, #0a0);
+}
+
+#kf-boardcont
+{
+ padding-right: $panel-space;
+ position: relative;
+ float: left;
+}
+#kf-infocont
+{
+ width: $panel-width; height: 400px;
+ position: relative;
+ float: right;
+}
+$fsize: 22px;
+
+#kf-ocause
+{
+ font-size: 32px;
+ margin-bottom: 18px;
+ display: none;
+}
+#kf-resume
+{
+ display: none;
+}
+
+.kf-xbutton
+{
+ $border: 1px;
+ $padding: 3px;
+
+ box-sizing: border-box;
+ display: block; 
+ width: $panel-width;
+ text-align: center;
+ border: $border solid #555;
+ background: linear-gradient(#222, #080808);
+ color: #eee;
+ padding: $padding;
+ border-radius: 3px;
+ font-size: 17px;
+ -webkit-user-select: none;
+ -moz-user-select: none;
+ user-select:none;
+ z-index: 2;
+ 
+ margin-bottom: 3px;
+}
+.kf-xbutton:hover, .kf-xbutton:active, .kf-xbutton.selected
+{
+ background-color: rgba(0, 0, 0, 0.8);
+ color: #8ff;
+ cursor: pointer;
+}
+.kf-xbutton.menu
+{
+ width: 85%;
+ max-width: 180px;
+ margin-left: auto; margin-right: auto;
+ font-size: 24px;
+}
+.kf-xbutton:active
+{
+ margin-top:1px;
+ margin-bottom: 2px;
+}
+.kf-buttonsep
+{
+ padding-top:1px;
+}
+#kf-pausegame2
+{
+ display: none;
+}
+.kf-stat
+{
+ text-align: center;
+ margin-bottom: 6px;
+
+ header
+ {
+  box-sizing: border-box;
+  display: inline-block;
+  background: linear-gradient(#181818, #080808);
+  border-top: 1px solid #282828;
+  border-bottom: 1px solid #282828;
+  padding: 1px;
+  width: 100%;
+  text-align: center;
+  font-weight: bold;
+  font-size: 15px;
+ }
+}
+
+.kf-stat.kf-buttonstat
+{
+ position: absolute;
+ bottom: 5px;
+}
+
+.kf-overlay
+{
+ position: absolute;
+ top: 0; left: 0;
+ width: 100%; height: 100%;
+ background-color: rgba(128, 128, 128, 0.5);
+ z-index: 3000;
+ text-align: center;
+ display: none;
+ user-select: none;
+ -moz-user-select: none;
+ -webkit-user-select: none;
+
+ .align
+ {
+  display: inline-block;
+  vertical-align: middle;
+  height: 100%;
+ }
+}
+.kf-dialog
+{
+ display: inline-block;
+ vertical-align: middle;
+ margin: auto;
+ box-shadow: 0 0 15px rgba(0,0,0,.78);
+ background-color: #151515;
+ border: 1px solid #333;
+ width: 330px;
+ text-align: left;
+
+ header, footer
+ {
+  background-color: #222;
+  font-size: 20px; font-weight: bold;
+ }
+
+ header
+ {
+  padding: 8px;
+  border-bottom: 1px solid #333;
+ }
+
+ main
+ {
+  padding: 6px;
+  padding-top: 12px; padding-bottom: 17px;
+  font-size: 18px;
+  min-height: 100px;
+  text-align: center;
+ }
+
+ footer
+ {
+  border-top: 1px solid #333;
+  overflow: auto;
+  padding: 8px;
+ }
+ 
+ footer .kf-xbutton
+ {
+  float: right;
+  margin-bottom: 0px;
+ }
+
+ footer .kf-xbutton:active
+ {
+  float: right;
+  margin-top: 1px;
+  margin-bottom: -1px;
+ }
+}
+
+#kf-loading-overlay
+{
+ width: 100%; height: 100%;
+ position: absolute;
+ left: 0; top: 0;
+ background-color: $body-color;
+ color: #aaa;
+ display: table;
+ text-align: center;
+ 
+ span
+ {
+  display: table-cell;
+  vertical-align: middle;
+  font-size: 24px;
+ }
+}
