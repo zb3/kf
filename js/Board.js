@@ -42,7 +42,7 @@ kf.Board.prototype.rotate =  function(counter)
 kf.Board.prototype.addNew = function(c1, c2)
 {
  this.npball = {color: c2, garbage: false, handles: 0, wasSettled: false};
- this.np = [2, 1];
+ this.np = [((this.x-1)/2)|0, 1];
  this.nsball = {color: c1, garbage: false, handles: 0, wasSettled: false};
  this.ns = [0, -1];
 };
