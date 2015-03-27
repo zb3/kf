@@ -40,8 +40,7 @@ kf.Board.prototype.rotate =  function(counter)
   var t;
   t = ns[0]; ns[0] = ns[1]; ns[1] = t;
   t = np[0]; np[0] = np[1]; np[1] = t;
-  dy = np[0]==ns[0]?1:0;
-
+  dy = np[0]==ns[0]?1:0;  
   if (dy^counter)
   {
    t = np[dy];
@@ -103,7 +102,6 @@ kf.Board.prototype.addGarbage = function(n)
 kf.Board.prototype.reset = function(x, y)
 {
  this.x = x; this.y = y;
-
  this.np = this.ns = this.npball = this.nsball = null;
  for(var t=0,t2;t<this.x;t++)
  {
