@@ -1,6 +1,7 @@
-kf.Board = function(x, y)
+kf.Board = function(x, y, alternativeRotation)
 {
  this.x = x; this.y = y;
+ this.alternativeRotation = alternativeRotation;
  this.v = [];
 
  this.reset(x, y);
@@ -27,16 +28,50 @@ kf.Board.prototype.isFirstFree = function() //Other implementations allow it :O
 };
 kf.Board.prototype.rotate =  function(counter)
 {
- var nx = (counter?-1:1)*this.ns[1], ny = (counter?1:-1)*this.ns[0];
+ if (this.alternativeRotation)
+ {
+  var ns = [this.ns[0]+this.np[0], this.ns[1]+this.np[1]];
+  var np = [this.np[0], this.np[1]];
 
- if (this.isOK(this.np[0]+nx, this.np[1]+ny) && this.isFree(this.np[0]+nx, this.np[1]+ny))
- {
-  this.ns[0] = nx; this.ns[1] = ny;
+  var b = [Math.min(ns[0], np[0]), Math.min(ns[1], np[1])];
+  ns[0] -= b[0]; ns[1] -= b[1];
+  np[0] -= b[0]; np[1] -= b[1];
+
+  var t;
+  t = ns[0]; ns[0] = ns[1]; ns[1] = t;
+  t = np[0]; np[0] = np[1]; np[1] = t;
+  dy = np[0]==ns[0]?1:0;
+
+  if (dy^counter)
+  {
+   t = np[dy];
+   np[dy] = ns[dy];
+   ns[dy] = t;
+  }
+ 
+  if (!(this.isOK(b[0]+1-dy, b[1]+dy) && this.isFree(b[0]+1-dy, b[1]+dy)))
+  {
+   if (!(this.isOK(b[0]-1+dy, b[1]-dy) && this.isFree(b[0]-1+dy, b[1]-dy)))
+   return false;
+   else
+   b[dy]--;
+  } 
+  this.np[0] = np[0]+b[0]; this.np[1] = np[1]+b[1];
+  this.ns[0] = ns[0]-np[0]; this.ns[1] = ns[1]-np[1];
  }
- else if (this.isOK(this.np[0]-nx, this.np[1]-ny) && this.isFree(this.np[0]-nx, this.np[1]-ny))
+ else
  {
-  this.ns[0] = nx; this.ns[1] = ny;
-  this.np[0] -= nx; this.np[1] -= ny;
+  var nx = (counter?-1:1)*this.ns[1], ny = (counter?1:-1)*this.ns[0];
+
+  if (this.isOK(this.np[0]+nx, this.np[1]+ny) && this.isFree(this.np[0]+nx, this.np[1]+ny))
+  {
+   this.ns[0] = nx; this.ns[1] = ny;
+  }
+  else if (this.isOK(this.np[0]-nx, this.np[1]-ny) && this.isFree(this.np[0]-nx, this.np[1]-ny))
+  {
+   this.ns[0] = nx; this.ns[1] = ny;
+   this.np[0] -= nx; this.np[1] -= ny;
+  }
  }
 };
 kf.Board.prototype.addNew = function(c1, c2)
@@ -68,6 +103,7 @@ kf.Board.prototype.addGarbage = function(n)
 kf.Board.prototype.reset = function(x, y)
 {
  this.x = x; this.y = y;
+
  this.np = this.ns = this.npball = this.nsball = null;
  for(var t=0,t2;t<this.x;t++)
  {

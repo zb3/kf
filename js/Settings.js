@@ -29,7 +29,7 @@ kf.Dialog.prototype._dialogExit = function()
 kf.Settings = function(callback)
 {
  var _this = this; //js=genius part2
- this.settings = {ghostEnabled: true, x: 6, y: 13};
+ this.settings = {ghostEnabled: true, x: 6, y: 13, alternativeRotation: false};
 
  try
  {
@@ -42,6 +42,15 @@ kf.Settings = function(callback)
  this.ghostCheckbox.onchange = function()
  {
   _this.settings.ghostEnabled = _this.ghostCheckbox.checked;
+  localStorage.setItem('zb3.kf.settings', JSON.stringify(_this.settings));
+  callback();
+ };
+
+ this.arCheckbox = document.getElementById('kf-settings-alternative-rotation');
+ this.arCheckbox.checked  = this.settings.alternativeRotation;
+ this.arCheckbox.onchange = function()
+ {
+  _this.settings.alternativeRotation = _this.arCheckbox.checked;
   localStorage.setItem('zb3.kf.settings', JSON.stringify(_this.settings));
   callback();
  };
