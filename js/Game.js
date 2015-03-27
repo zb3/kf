@@ -5,7 +5,7 @@ kf.Game = function()
  this.normalTickSpeed = 100;
  this.fastTickSpeed = 10;
  this.nx = this.settings.settings.x; this.ny = this.settings.settings.y;
- this.board = new kf.Board(this.nx, this.ny);
+ this.board = new kf.Board(this.nx, this.ny, this.settings.settings.alternativeRotation);
  this.keys = {};
  this.display = new kf.Display(this);
  this.over = true;
@@ -66,6 +66,7 @@ kf.Game.prototype.onSettingsChanged = function()
   this.nx = this.settings.settings.x; this.ny = this.settings.settings.y;
   this.newGame();
  }
+ this.board.alternativeRotation = this.settings.settings.alternativeRotation;
  this.display.onSettingsChanged();
 };
 kf.Game.prototype.onHideSettings = function()
