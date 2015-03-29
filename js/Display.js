@@ -76,7 +76,7 @@ kf.Display.prototype._getDesiredSize = function(element)
  {
   for(rule=document.styleSheets[sheet].cssRules.length-1;rule>=0;rule--)
   {
-   if (document.styleSheets[sheet].cssRules[rule].selectorText && document.styleSheets[sheet].cssRules[rule].selectorText.match(rex))
+   if (document.styleSheets[sheet].cssRules && document.styleSheets[sheet].cssRules[rule].selectorText && document.styleSheets[sheet].cssRules[rule].selectorText.match(rex))
    {
     ret[0] = parseInt(document.styleSheets[sheet].cssRules[rule].style.width) | 0; ret[1] = parseInt(document.styleSheets[sheet].cssRules[rule].style.height) | 0;
     break loop;
